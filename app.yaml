@@ -1,0 +1,29 @@
+runtime: nodejs20
+env: standard
+
+instance_class: F1
+service: default
+
+automatic_scaling:
+  min_instances: 0
+  max_instances: 2
+
+handlers:
+  # Sirve todos los archivos estáticos con URL que comienzan con “assets” desde la carpeta dist/assets
+  - url: /assets
+    static_dir: dist/assets
+
+  # Sirve el archivo index.html (y otros archivos HTML) para todas las rutas no coincidentes, habilitando así el enrutamiento SPA
+  - url: /(.*\.(html|htm))$
+    static_files: dist/\1
+    upload: dist/(.*\.(html|htm))$
+
+  # Capturando todos los archivos dentro de /public
+  - url: /(.+\..+)$
+    static_files: dist/\1
+    upload: dist/(.+\..+)$
+
+  # Redirige todas las demás solicitudes a index.html para permitir el enrutamiento del lado del cliente
+  - url: /.*
+    static_files: dist/index.html
+    upload: dist/index.html
